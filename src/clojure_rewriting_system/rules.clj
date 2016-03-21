@@ -16,8 +16,8 @@
                         (recur (first t) (conj stack (rest t)) rez)
                         (if (seq stack)                        
                           (recur (first stack) (rest stack) rez)
-                          rez)) 
-
+                          rez))
+      
       (map-term? t) (if (seq t) ;; {} -> true                      
                       (recur (second (first t))
                              (conj stack (dissoc t (first (first t)))) rez)
