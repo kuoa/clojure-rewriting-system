@@ -68,20 +68,65 @@
      => nil
      )
 
-;;; 2) le combinateur :  or-else (ou alors)
 
-;;; Exercice (inspiré du and-then) :
 
-;;; (strat-or-else-2 s1 s2)
-;;; tente d'appliquer la stratégie s1
-;;;   - en cas de succès : c'est le résultat de l'application de s1
-;;;   - en cas d'échec : c'est la statégie s2
+(fact "Strat or-else-2."
+     (let [s (strat-or-else-2
+              (strat-rule :r-plus-0 simple-rules)
+              (strat-rule :l-times-1 simple-rules))]
+       (s '(0 + ((42 + 2) * 1))))
 
-;;; (strat-or-else s & others)
-;;; généralisation à n stratégies
-;;; cas particulier:  (strat-or-else) retourne strat-echec
+     => '((42 + 2) * 1)
 
-;;; => donner les facts qui vont bien
+     (let [k (strat-or-else-2
+               (strat-rule :l-times-1 simple-rules)
+               (strat-rule :r-plus-0 simple-rules))]
+       (k '(0 + ((42 + 2) * 1))))
+
+     => '((42 + 2) * 1)
+
+     (let [s (strat-or-else-2
+              (strat-rule :l-plus-0 simple-rules)
+              (strat-rule :l-times-1 simple-rules))]
+       (s '(?X)))
+
+     => nil)
+
+(fact "Strat or-else."
+      (let [s (strat-or-else
+              (strat-rule :r-plus-0 simple-rules)
+              (strat-rule :l-times-1 simple-rules))]
+       (s '(0 + ((42 + 2) * 1))))
+
+      => '((42 + 2) * 1)
+
+       (let [k (strat-or-else
+               (strat-rule :l-times-1 simple-rules)
+               (strat-rule :r-plus-0 simple-rules))]
+       (k '(0 + ((42 + 2) * 1))))
+
+     (let [k (strat-or-else
+              (strat-rule :l-times-1 simple-rules)
+              (strat-rule :l-times-1 simple-rules)
+              (strat-rule :r-plus-0 simple-rules))]
+       (k '(0 + ((42 + 2) * 1))))
+
+     => '((42 + 2) * 1)
+
+     (let [k (strat-or-else
+              (strat-rule :l-times-1 simple-rules)
+              (strat-rule :l-times-1 simple-rules)
+              (strat-rule :l-times-1 simple-rules))]
+       (k '(0 + ((42 + 2) * 1))))
+     => nil
+     
+     (let [s (strat-or-else
+              (strat-rule :l-plus-0 simple-rules)
+              (strat-rule :l-times-1 simple-rules))]
+       (s '(?X)))
+
+     => nil)
+
 
 ;;; Exercice (subsidiaire): implémenter some-success avec reduce
 

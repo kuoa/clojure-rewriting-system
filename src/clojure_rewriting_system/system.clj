@@ -36,9 +36,21 @@
   (fn [t] (when-let [u (s1 t)] (s2 u))))
 
 (defn strat-and-then
-  "Applies in a consequtive order the strategies `strats`."
-  ([] (strat-identity))
+  "Applies in a consequtive order the strategies `s & others`."
+  ([] strat-identity)
   ([s & others]
    (if (seq others)
      (strat-and-then-2 s (apply strat-and-then others))
+     s)))
+
+
+(defn strat-or-else-2 [s1 s2]
+  (fn [t] (if-let [u (s1 t)] u (s2 t))))
+
+(defn strat-or-else
+  "Applies the first strategy that works, from `s & others`."
+  ([] strat-failure)
+  ([s & others]
+   (if (seq others)
+     (strat-or-else-2 s (apply strat-and-then others))
      s)))
