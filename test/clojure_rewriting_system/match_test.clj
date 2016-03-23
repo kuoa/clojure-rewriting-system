@@ -21,11 +21,11 @@
      (subst '(2 + 3) '{ ?X (3 * 1) })
      => '(2 + 3))
 
-(fact "Substitution avec vecteurs"
+(fact "Vectors"
      (subst '[?X + 0] '{ ?X [3 * 1] })
      => '[[3 * 1] + 0])
 
-(fact "Substitution ave une map"
+(fact "Map"
      (subst '{:un (?X + 1)
               :deux (?Y + 2) } '{ ?X (3 * 1)
                                  ?Y 8 })
@@ -41,7 +41,7 @@
 
      (pmatch '?X '(3 + 0) '{ ?X (3 + 0) }) => '{ ?X (3 + 0) })
 
-(fact "Exemples de matching"
+(fact "Seq matching"
 
      (pmatch '(?X + 0) '(3 + 0) {})
      => '{ ?X 3 }
@@ -65,7 +65,7 @@
      (pmatch '(?X + ?Y) '(3 + 2 + 1) {}) => nil
 
      (pmatch '(?X + ?Y) '(3 + (2 + 1)) {})
-     => {?X 3
+     => '{?X 3
          ?Y (2 + 1)}
 
      (pmatch '(?X + ?Y + ?Z) '(3 + 2) {}) => nil
@@ -78,3 +78,46 @@
 
      (pmatch '(3 + 0) '(3 + 0) {})
      => {})
+
+
+
+(fact "Vec matching"
+
+     (pmatch '[?X + 0] '[3 + 0] {})
+     => '{ ?X 3 }
+
+     (pmatch '[?X + 0] '[3 * 1] {})
+     => nil
+     
+     (pmatch '[?X + 0] '[[3 * 1] + 0] {})
+     => '{ ?X [3 * 1] }
+
+     (pmatch '[?X + 0] '3 {})
+     => nil
+
+     (pmatch '[?X + 0] '[[3 + 0] + 0] {})
+     => '{ ?X [3 + 0] }
+
+     (pmatch '[[?X + ?Y] + 0] '[[3 + 0] + 0] {})
+     => '{?X 3 ?Y 0})
+
+
+(fact "Map matching"
+
+     (pmatch '{:a [?X + 0] } {:a '[3 + 0]} {})
+     => '{?X 3}
+
+     (pmatch '{:a [?X + 0] } {:a '[3 * 1]} {})
+     => nil
+     
+     (pmatch '{:a [?X + 0]} {:a '[[3 * 1] + 0]} {})
+     => '{ ?X [3 * 1] } 
+
+     (pmatch '[?X + 0] '3 {})
+     => nil
+
+     (pmatch {:a '[?X + 0]} {:a '[[3 + 0] + 0]} {})
+     => '{ ?X [3 + 0] }
+
+     (pmatch '{:a [[?X + ?Y] + 0]}  {:a '[[3 + 0] + 0]} {})
+     => '{?X 3 ?Y 0} {})
