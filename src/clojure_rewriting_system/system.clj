@@ -54,3 +54,50 @@
    (if (seq others)
      (strat-or-else-2 s (apply strat-and-then others))
      s)))
+
+
+(defn some-success
+  "Applies the strategy `s` to the terms `terms`. 
+  We return a list with new terms for each strategy that succeeds."
+  [s term]
+  (loop [ts term, success? false, res []]
+    (if (seq ts)
+      (if-let [u (s (first ts))]
+        (recur (rest ts) true (conj res u))
+        (recur (rest ts) success? (conj res (first ts))))
+      res)))
+
+(defn some-success-reduce
+  "Idem as some-succes but using reduce and returns a array containing
+  [result,sucess?] which allows us to avoid comparing the terms to know if
+  the strategy has failed or not."
+  [s term]
+  (reduce (fn [[res, success?], t]
+            (if-let [u (s t)]
+              [(conj res u), true]
+              [(conj res t), success?])) [[], false] term))
+
+
+(defn strat-sub
+  "Strategy based on some-success-reduce without term comparing
+  P.S HERE COME THE BONUS POINTS :D"
+  [s]
+  (fn [t]
+    (let [res (some-success-reduce s t)]
+      (when (second res)
+        (first res)))))
+
+(defn strat-bottom-up
+  "Bottom up recursive strategy"
+  [s]
+  (fn [t] (strat-and-then (strat-sub (strat-buttom-up s)) s) t))
+    
+      
+        
+    
+              
+            
+
+
+
+

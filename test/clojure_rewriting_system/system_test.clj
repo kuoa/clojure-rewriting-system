@@ -130,49 +130,68 @@
 
 ;;; Exercice (subsidiaire): implémenter some-success avec reduce
 
-(fact "Exemples avec some-success."
+(fact "Some-success."
 
-     (some-success (strat-regle :lplus-zero simpl-regles)
+     (some-success (strat-rule :l-plus-0 simple-rules)
                    '((3 + 0) (4 + 0) (0 + 4) (5 + 0)))
 
-     => [3 4 (0 + 4) 5]
+     => '[3 4 (0 + 4) 5]
 
-     (some-success (strat-regle :lplus-zero simpl-regles)
+     (some-success (strat-rule :l-plus-0 simple-rules)
                    '((0 + 3) (0 + 4) (0 + 5)))
 
-     => nil)
+     => '[(0 + 3) (0 + 4) (0 + 5)])
 
 
-;;; Stratégie sub : réécriture des sous-termes
+(fact "Some-success-reduce."
+
+     (first (some-success-reduce (strat-rule :l-plus-0 simple-rules)
+                   '((3 + 0) (4 + 0) (0 + 4) (5 + 0))))
+
+     => '[3 4 (0 + 4) 5]
+
+     (second (some-success-reduce (strat-rule :l-plus-0 simple-rules)
+                   '((3 + 0) (4 + 0) (0 + 4) (5 + 0))))
+
+     => true
+
+     (first (some-success-reduce (strat-rule :l-plus-0 simple-rules)
+                   '((0 + 3) (0 + 4) (0 + 5))))
+
+     => '[(0 + 3) (0 + 4) (0 + 5)]
+
+     (second (some-success-reduce (strat-rule :l-plus-0 simple-rules)
+                   '((0 + 3) (0 + 4) (0 + 5))))
+
+     => false)
+    
+
 
 (fact "Exemples avec strat-sub"
 
-     (let [strat (strat-sub (strat-regle :lplus-zero simpl-regles))]
+     (let [strat (strat-sub (strat-rule :l-plus-0 simple-rules))]
        (strat '((3 + 0) (4 + 0) (0 + 4) (5 + 0))))
      => [3 4 '(0 + 4) 5]
 
-     (let [strat (strat-sub (strat-regle :lplus-zero simpl-regles))]
+     (let [strat (strat-sub (strat-rule :l-plus-0 simple-rules))]
        (strat '((0 + 4) (0 + 3) (0 + 2))))
      => nil
 
-     (let [strat (strat-sub (strat-regle :lplus-zero simpl-regles))]
-       (strat :toto))
-     => nil
-     
-     )
+     (let [strat (strat-sub (strat-rule :l-plus-0 simple-rules))]
+       (strat '[]))
+     => nil)
 
 (fact "Exemple de bottom-up de niveau 1."
 
      ;; ((4 + 0) + 0) --> (4 + 0)
-     (let [s-lplus-zero (strat-regle :lplus-zero simpl-regles)]
+     (let [s-lplus-zero (strat-rule :l-plus-0 simple-rules)]
        ((strat-sub s-lplus-zero)
-        '((4 + 0) + 0))) => '(4 + 0)
+        '((4 + 0) + 0))) => '[4 + 0]
      
      ;; ((4 + 0) + 0) --> (4 + 0) --> 4
-     (let [s-lplus-zero (strat-regle :lplus-zero simpl-regles)]
-       ((strat-and-then (strat-sub s-lplus-zero) s-lplus-zero)
+     (let [s-lplus-zero (strat-rule :l-plus-0 simple-rules)]
+       ((strat-and-then s-lplus-zero s-lplus-zero)
         '((4 + 0) + 0))) => 4
-
      )
 
 
@@ -180,12 +199,12 @@
 
 (fact "Stratégie bottom up"
 
-     (let [strat (strat-regle :lplus-zero simpl-regles)]
+     (let [strat (strat-rule :l-plus-0 simple-rules)]
        ((strat-bottom-up strat)
         '(3 * (4 + (2 + 0)))))
        => '(3 * (4 + 2))
 
-     (let [strat (strat-regle :lplus-zero simpl-regles)]
+     (let [strat (strat-rule :l-plus-0 simple-rules)]
        ((strat-bottom-up strat)
         '(3 * (4 + (0 + 2)))))
      => nil
@@ -203,7 +222,7 @@
 
 (fact "Problème avec strat-bottom-up."
 
-     (let [strat (strat-regle :lplus-zero simpl-regles)]
+     (let [strat (strat-rule :l-plus-zero simple-rules)]
        ((strat-bottom-up strat)
         '((0 + 4) * 5)))  ;; => ((0 + 4) * 5)   << problème
      => nil)
