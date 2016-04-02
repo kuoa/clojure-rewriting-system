@@ -12,7 +12,6 @@
   (when-let [s (pmatch l t {})]
     (subst r s)))
 
-
 (defn apply-rule
   [t rule sys]
   "Applies the rule `rule` from the system `sys` on term `t`."
@@ -52,7 +51,7 @@
   ([] strat-failure)
   ([s & others]
    (if (seq others)
-     (strat-or-else-2 s (apply strat-and-then others))
+     (strat-or-else-2 s (apply strat-or-else others))
      s)))
 
 
@@ -90,14 +89,4 @@
 (defn strat-bottom-up
   "Bottom up recursive strategy"
   [s]
-  (fn [t] (strat-and-then (strat-sub (strat-buttom-up s)) s) t))
-    
-      
-        
-    
-              
-            
-
-
-
-
+  (fn [t] (strat-and-then (strat-sub (strat-bottom-up s)) s) t))

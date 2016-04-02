@@ -31,8 +31,7 @@
       (try
         (apply-rule '((3 + 0) * 1) :blabla simple-rules)
         (catch Exception e (ex-data e))))
-     => :blabla
-     )
+     => :blabla)
    
 
 (fact "Rewriting with multiple rules."
@@ -65,8 +64,7 @@
               (strat-rule :r-plus-0 simple-rules))]
        (s '(0 + ((42 + 2) * 1))))
    
-     => nil
-     )
+     => nil)
 
 
 
@@ -191,30 +189,30 @@
      ;; ((4 + 0) + 0) --> (4 + 0) --> 4
      (let [s-lplus-zero (strat-rule :l-plus-0 simple-rules)]
        ((strat-and-then s-lplus-zero s-lplus-zero)
-        '((4 + 0) + 0))) => 4
-     )
+        '((4 + 0) + 0))) => 4)
 
 
-;;; Stratégie bottom-up
+;;; 
 
 (fact "Stratégie bottom up"
 
+      ;; PROBLEM
      (let [strat (strat-rule :l-plus-0 simple-rules)]
        ((strat-bottom-up strat)
         '(3 * (4 + (2 + 0)))))
        => '(3 * (4 + 2))
 
+       ;; PROBLEM
      (let [strat (strat-rule :l-plus-0 simple-rules)]
        ((strat-bottom-up strat)
         '(3 * (4 + (0 + 2)))))
      => nil
 
-     (let [strat (strat-regle :lplus-zero simpl-regles)]
+        ;; PROBLEM
+     (let [strat (strat-rule :l-plus-0 simple-rules)]
        ((strat-bottom-up strat)
         '(3 * ((2 + 0) + 0))))
-     => '(3 * 2)
-
-     )
+     => '(3 * 2))
      
 ;;; Pour finir le projet réécriture
 
@@ -227,7 +225,6 @@
         '((0 + 4) * 5)))  ;; => ((0 + 4) * 5)   << problème
      => nil)
 
-;;; question subsidiaire : solution *sans* comparaison de terme
 
 ;;; 2) définir un système de simplifications (arithmétiques)
 ;;;    un peu plus intéressant (en évitant commutativité)

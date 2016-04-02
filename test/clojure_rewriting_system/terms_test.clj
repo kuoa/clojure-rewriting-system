@@ -1,4 +1,4 @@
-(ns clojure-rewriting-system.test_terms
+(ns clojure-rewriting-system.terms_test
   (:use midje.sweet)
   (:require [clojure-rewriting-system.terms :refer :all]))
 
