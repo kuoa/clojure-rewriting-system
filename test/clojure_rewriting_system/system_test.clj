@@ -101,7 +101,8 @@
        (let [k (strat-or-else
                (strat-rule :l-times-1 simple-rules)
                (strat-rule :r-plus-0 simple-rules))]
-       (k '(0 + ((42 + 2) * 1))))
+         (k '(0 + ((42 + 2) * 1))))
+       => '((42 + 2) * 1)
 
      (let [k (strat-or-else
               (strat-rule :l-times-1 simple-rules)
@@ -125,8 +126,6 @@
 
      => nil)
 
-
-;;; Exercice (subsidiaire): implémenter some-success avec reduce
 
 (fact "Some-success."
 
@@ -196,42 +195,104 @@
 
 (fact "Stratégie bottom up"
 
-      ;; PROBLEM
      (let [strat (strat-rule :l-plus-0 simple-rules)]
        ((strat-bottom-up strat)
         '(3 * (4 + (2 + 0)))))
        => '(3 * (4 + 2))
 
-       ;; PROBLEM
      (let [strat (strat-rule :l-plus-0 simple-rules)]
        ((strat-bottom-up strat)
         '(3 * (4 + (0 + 2)))))
      => nil
 
-        ;; PROBLEM
      (let [strat (strat-rule :l-plus-0 simple-rules)]
        ((strat-bottom-up strat)
         '(3 * ((2 + 0) + 0))))
      => '(3 * 2))
-     
-;;; Pour finir le projet réécriture
 
-;;; 1) redéfinir   strat-bottom-up   pour corriger le problème suivant:
 
 (fact "Problème avec strat-bottom-up."
 
-     (let [strat (strat-rule :l-plus-zero simple-rules)]
+     (let [strat (strat-rule :l-plus-0 simple-rules)]
        ((strat-bottom-up strat)
-        '((0 + 4) * 5)))  ;; => ((0 + 4) * 5)   << problème
+        '((0 + 4) * 5)))
      => nil)
 
 
-;;; 2) définir un système de simplifications (arithmétiques)
-;;;    un peu plus intéressant (en évitant commutativité)
 
-;;;  exemple de règles :   ?X * 1 -> ?X
-;;;                        ((?X + ?Y) - ?Y) -> ?X
-;;;                        (?X - ?X) -> 0
-;;;  (etc....)
+(fact "ArithRules"
+      (let [s (strat-or-else
+               (strat-rule :same-term-c arith-rules)
+               (strat-rule :diff-l arith-rules)
+               (strat-rule :diff-r arith-rules)
+               (strat-rule :l-times-1 simple-rules)
+               (strat-rule :r-times-1 simple-rules)
+               (strat-rule :l-plus-0 simple-rules)
+               (strat-rule :r-plus-0 simple-rules))]
+       (s '(0 + ((42 + 2) * 1))))
 
-;;; la stratégie strat-or-else joue ici un rôle important
+      => '((42 + 2) * 1)
+
+      (let [s (strat-or-else
+               (strat-rule :same-term-c arith-rules)
+               (strat-rule :diff-l arith-rules)
+               (strat-rule :diff-r arith-rules)
+               (strat-rule :l-times-1 simple-rules)
+               (strat-rule :r-times-1 simple-rules)
+               (strat-rule :l-plus-0 simple-rules)
+               (strat-rule :r-plus-0 simple-rules))]
+       (s '(34 - 34)))
+
+      =>  0
+
+      (let [s (strat-or-else
+               (strat-rule :same-term-c arith-rules)
+               (strat-rule :diff-l arith-rules)
+               (strat-rule :diff-r arith-rules)
+               (strat-rule :l-times-1 simple-rules)
+               (strat-rule :r-times-1 simple-rules)
+               (strat-rule :l-plus-0 simple-rules)
+               (strat-rule :r-plus-0 simple-rules))]
+       (s '((34 + (?X - (2 + 3))) - (?X - (2 + 3)))))
+
+      =>  34
+
+         (let [s (strat-or-else
+               (strat-rule :same-term-c arith-rules)
+               (strat-rule :diff-l arith-rules)
+               (strat-rule :diff-r arith-rules)
+               (strat-rule :l-times-1 simple-rules)
+               (strat-rule :r-times-1 simple-rules)
+               (strat-rule :l-plus-0 simple-rules)
+               (strat-rule :r-plus-0 simple-rules))]
+       (s '(((?X + ?Y + ?Z) + 55) - (?X + ?Y + ?Z))))
+
+         =>  55
+
+         (let [s (strat-or-else
+                  (strat-rule :same-term-c arith-rules)
+                  (strat-rule :diff-l arith-rules)
+                  (strat-rule :diff-r arith-rules)
+                  (strat-rule :sqrt arith-rules)
+                  (strat-rule :sqr arith-rules)
+                  (strat-rule :l-times-1 simple-rules)
+                  (strat-rule :r-times-1 simple-rules)
+                  (strat-rule :l-plus-0 simple-rules)
+                  (strat-rule :r-plus-0 simple-rules))]
+           (s '(sqrt (?X * ?X))))
+
+         =>  '(|?X|)
+
+            (let [s (strat-or-else
+                  (strat-rule :same-term-c arith-rules)
+                  (strat-rule :diff-l arith-rules)
+                  (strat-rule :diff-r arith-rules)
+                  (strat-rule :sqrt arith-rules)
+                  (strat-rule :sqr arith-rules)
+                  (strat-rule :l-times-1 simple-rules)
+                  (strat-rule :r-times-1 simple-rules)
+                  (strat-rule :l-plus-0 simple-rules)
+                  (strat-rule :r-plus-0 simple-rules))]
+              (s '((sqrt ?X) * (sqrt ?X))))
+
+      => '?X)

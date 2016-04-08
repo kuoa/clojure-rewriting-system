@@ -10,10 +10,12 @@
   "A seq-term is a `sequence`."
   [t] (sequential? t))
 
+;;; Exercice - ajouter les termes vecteurs [t1 t2 ... tN] -> DONE
 (defn vec-term?
   "A vec-term is a `vector`."
   [t] (vector? t))
 
+;;; Exercice - ajouter les termes maps { k1 t1, k2 t2, ... kN tN } -> DONE
 (defn map-term?
   "A map-term is a `map`."
   [t] (map? t))

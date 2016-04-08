@@ -1,6 +1,15 @@
 (ns clojure-rewriting-system.rules
   (:require [clojure-rewriting-system.terms :refer :all]))
 
+
+;;; Exercice : implémenter la contrainte principale
+;;; des règles de réécriture:
+;;;  dans une règle   lhs -> rhs
+;;;  la contrainte est: les variables du membre de droite
+;;;  sont un sous-ensemble des variables du membre de gauche
+;;   (fonctions :   (variables t) retourne l'ensemble
+;;   des variables du terme ...) puis modification de regle?) -> DONE
+
 (defn variables
   "Returns a set of all the variables in `t`.
   Terminal using a dummy stack."
@@ -28,6 +37,8 @@
     :else (if (seq stack)
               (recur (first stack) (rest stack) rez)
               rez))))
+
+;;; Exercice -> DONE
 
 (defn variables-subset?
   "Check if the variables are a subset"

@@ -1,6 +1,8 @@
 (ns clojure-rewriting-system.match
   (:require [clojure-rewriting-system.terms :refer :all]))
 
+;; Exercice : substitution pour des maps, vecteurs -> DONE
+
 (defn subst
   "Applies the substitution `s` to the terme `t`."
   [t s]
@@ -15,6 +17,7 @@
                      (assoc m key (subst value s))) {} t)
     :else t))
 
+;; Exercice : match pour des maps, vecteurs -> DONE
 
 (declare pmatch)
 
